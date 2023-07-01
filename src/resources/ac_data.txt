@@ -1,0 +1,4 @@
+VECTOR171     Aircraft Name
+20.5          Wing Area
+10.0          Wing Span
+2.05          Mean Aerodynamic Chord
