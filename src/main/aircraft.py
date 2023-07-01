@@ -90,6 +90,3 @@ class Aircraft:
             for i in range(nps):
                 temp = file.readline().split()
                 self.clmax_fxx[i, 0:1] = temp[0:1]
-
-
-

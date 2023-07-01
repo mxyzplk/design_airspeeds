@@ -17,6 +17,7 @@ class Airspeed:
         self.disa = disa
         self.qdyn = 0
         self.rho = 0
+        self.t = 0
 
     def evaluate_atmosphere(self):
 
@@ -128,12 +129,12 @@ class Airspeed:
             p_std = p_6 * (t_std / T_6) ** (-g / (a_ms2 * R))
             rho_std = rho_6 * (t_std / T_6) ** (-g / (a_ms2 * R) - 1)
 
-        t = t_std + self.disa
-        rho = rho_std / (1 + self.disa / t_std)
+        self.t = t_std + self.disa
+        self.rho = rho_std / (1 + self.disa / t_std)
         self.delta = p_std / p0
-        self.theta = t / T0
-        self.sigma = rho / rho0
-        self.cs = (gamma * R * t) ** 0.5
+        self.theta = self.t / T0
+        self.sigma = self.rho / rho0
+        self.cs = (gamma * R * self.t) ** 0.5
 
     def evaluate_velocities(self):
 
