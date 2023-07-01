@@ -24,7 +24,7 @@ class Aircraft:
         self.dclda = None
         self.clmax_f00 = None
         self.clmax_fxx = None
-        self.vc = None
+        self.vc = []
         self.resources_dir = None
         self.results_dir = None
 
@@ -84,11 +84,9 @@ class Aircraft:
         file_path = os.path.join(self.resources_dir, 'vc.txt')
         with open(file_path, 'r') as file:
             temp = file.readline().split()
-            nps = int(temp[0])
-            self.vc = np.empty((nps, 2))
-            for i in range(nps):
-                temp = file.readline().split()
-                self.vc[i, 0:1] = temp[0:1]
+            self.vc[0] = temp[0]   # KCAS limitation
+            temp = file.readline().split()
+            self.vc[1] = temp[0]   # Mach limitation
 
     def read_clmax_f00(self):
 
