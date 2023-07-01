@@ -19,6 +19,8 @@ class Aircraft:
         self.s = 0
         self.b = 0
         self.mac = 0
+        self.name = None
+        self.disa = 0
 
         # aerodynamic data
         self.dclda = None
@@ -46,6 +48,14 @@ class Aircraft:
         else:
             os.makedirs(self.results_dir)
 
+    def read_ac_data(self):
+
+        file_path = os.path.join(self.resources_dir, 'ac_data.txt')
+
+        with open(file_path, 'r') as file:
+            temp = file.readline().split()
+            pass
+        
     def read_mass(self):
 
         file_path = os.path.join(self.resources_dir, 'mass.txt')
@@ -84,9 +94,9 @@ class Aircraft:
         file_path = os.path.join(self.resources_dir, 'vc.txt')
         with open(file_path, 'r') as file:
             temp = file.readline().split()
-            self.vc[0] = temp[0]   # KCAS limitation
+            self.vc.append(float(temp[0]) * 0.514444444)    # CAS limitation
             temp = file.readline().split()
-            self.vc[1] = temp[0]   # Mach limitation
+            self.vc.append(float(temp[0]))                  # Mach limitation
 
     def read_clmax_f00(self):
 
