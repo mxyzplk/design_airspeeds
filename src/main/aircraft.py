@@ -9,6 +9,8 @@ class Aircraft:
         self.mzfw = 0
         self.mlw = 0
         self.mow = 0
+        self.weights = []
+        self.weight_label = []
 
         # aircraft data
         self.ctype = 0
@@ -24,12 +26,25 @@ class Aircraft:
         self.clmax_fxx = None
         self.vc = None
         self.resources_dir = None
+        self.results_dir = None
 
-    def get_resources_dir(self):
+        self.get_dirs()
+        self.read_mass()
+        self.read_vc()
+        self.read_clmax_f00()
+        self.read_clmax_fxx()
+
+    def get_dirs(self):
 
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
         self.resources_dir = os.path.join(current_dir, 'src', 'resources')
+        self.results_dir = os.path.join(current_dir, 'src', 'results')
+
+        if os.path.exists(self.results_dir):
+            pass
+        else:
+            os.makedirs(self.results_dir)
 
     def read_mass(self):
 
@@ -37,13 +52,21 @@ class Aircraft:
 
         with open(file_path, 'r') as file:
             temp = file.readline().split()
-            self.mtow = temp[0]
+            self.mtow = float(temp[0])
+            self.weights.append(float(temp[0]))
+            self.weight_label.append(float(temp[1]))
             temp = file.readline().split()
-            self.mlw = temp[0]
+            self.mlw = float(temp[0])
+            self.weights.append(float(temp[0]))
+            self.weight_label.append(float(temp[1]))
             temp = file.readline().split()
-            self.mzfw = temp[0]
+            self.mzfw = float(temp[0])
+            self.weights.append(float(temp[0]))
+            self.weight_label.append(float(temp[1]))
             temp = file.readline().split()
-            self.mow = temp[0]
+            self.mow = float(temp[0])
+            self.weights.append(float(temp[0]))
+            self.weight_label.append(float(temp[1]))
 
     def read_dclda(self):
 

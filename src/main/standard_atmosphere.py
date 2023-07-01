@@ -1,23 +1,23 @@
 import numpy as np
 
-class Airspeed:
-    def __init__(self, altitude, speed, vtype, disa):
+class Atmosphere:
+    def __init__(self, altitude, disa):
         self.h = altitude
-        self.speed = speed
-        self.type = vtype
-        self.cas = 0
-        self.tas = 0
-        self.eas = 0
-        self.mach = 0
         self.delta = 0
         self.theta = 0
         self.sigma = 0
         self.mu = 0
         self.cs = 0
         self.disa = disa
-        self.qdyn = 0
         self.rho = 0
         self.t = 0
+
+        self.evaluate_atmosphere()
+
+    def set_altitude(self, altitude, disa):
+        self.h = altitude
+        self.disa = disa
+        self.evaluate_atmosphere()
 
     def evaluate_atmosphere(self):
 
@@ -136,6 +136,25 @@ class Airspeed:
         self.sigma = self.rho / rho0
         self.cs = (gamma * R * self.t) ** 0.5
 
+class Airspeed:
+    def __init__(self, altitude, speed, vtype, disa):
+        self.h = altitude
+        self.speed = speed
+        self.type = vtype
+        self.cas = 0
+        self.tas = 0
+        self.eas = 0
+        self.mach = 0
+        self.disa = disa
+        self.qdyn = 0
+
+        self.atmos = Atmosphere(self.h, self.disa)
+
+    def set_altitude(self, altitude, disa):
+        self.h = altitude
+        self.disa = disa
+        self.atmos.set_altitude(self.h, self.disa)
+
     def evaluate_velocities(self):
 
         cso = 340.43  # Sound speed at sea level (m)
@@ -144,41 +163,39 @@ class Airspeed:
         gamma = 1.4
         g = 9.80665  # [kg*m/s2]
 
-        self.evaluate_atmosphere()
-
         if self.type == 'CAS':
             self.cas = self.speed
-            self.eas = (2 * self.delta * cso ** 2 / (gamma - 1) * ((1 + 1 / self.delta * (
+            self.eas = (2 * self.atmos.delta * cso ** 2 / (gamma - 1) * ((1 + 1 / self.atmos.delta * (
                         (1 + (gamma - 1) / 2 * (self.cas / cso) ** 2) ** (gamma / (gamma - 1)) - 1)) ** (
                                                                                (gamma - 1) / gamma) - 1)) ** 0.5
-            self.mach = self.eas / (cso * (self.delta ** 0.5))
-            self.tas = self.mach * self.cs
+            self.mach = self.eas / (cso * (self.atmos.delta ** 0.5))
+            self.tas = self.mach * self.atmos.cs
 
 
         elif self.type == 'Mach':
             self.mach = self.speed
             self.tas = self.mach * self.cs
-            self.eas = cso * self.mach * self.delta ** 0.5
-            self.cas = (2 * cso ** 2 / (gamma - 1) * ((1 + self.delta * (
-                        (1 + (gamma - 1) / 2 * ((self.eas / cso) ** 2) / self.delta) ** (gamma / (gamma - 1)) - 1)) ** (
+            self.eas = cso * self.mach * self.atmos.delta ** 0.5
+            self.cas = (2 * cso ** 2 / (gamma - 1) * ((1 + self.atmos.delta * (
+                        (1 + (gamma - 1) / 2 * ((self.eas / cso) ** 2) / self.atmos.delta) ** (gamma / (gamma - 1)) - 1)) ** (
                                                                   (gamma - 1) / gamma) - 1)) ** 0.5
 
 
         elif self.type == 'EAS':
             self.eas = self.speed
-            self.cas = (2 * cso ** 2 / (gamma - 1) * ((1 + self.delta * (
-                        (1 + (gamma - 1) / 2 * ((self.eas / cso) ** 2) / self.delta) ** (gamma / (gamma - 1)) - 1)) ** (
+            self.cas = (2 * cso ** 2 / (gamma - 1) * ((1 + self.atmos.delta * (
+                        (1 + (gamma - 1) / 2 * ((self.eas / cso) ** 2) / self.atmos.delta) ** (gamma / (gamma - 1)) - 1)) ** (
                                                                   (gamma - 1) / gamma) - 1)) ** 0.5
-            self.mach = self.eas / (cso * self.delta ** 0.5)
+            self.mach = self.eas / (cso * self.atmos.delta ** 0.5)
             self.tas = self.mach * self.cs
 
 
         elif self.type == 'TAS':
             self.tas = self.speed
             self.mach = self.tas / self.cs
-            self.eas = cso * self.mach * self.delta ** 0.5
-            self.cas = (2 * cso ** 2 / (gamma - 1) * ((1 + self.delta * (
-                        (1 + (gamma - 1) / 2 * ((self.eas / cso) ** 2) / self.delta) ** (gamma / (gamma - 1)) - 1)) ** (
+            self.eas = cso * self.mach * self.atmos.delta ** 0.5
+            self.cas = (2 * cso ** 2 / (gamma - 1) * ((1 + self.atmos.delta * (
+                        (1 + (gamma - 1) / 2 * ((self.eas / cso) ** 2) / self.atmos.delta) ** (gamma / (gamma - 1)) - 1)) ** (
                                                                   (gamma - 1) / gamma) - 1)) ** 0.5
 
-        self.qdyn = 0.5 * self.rho * self.eas ** 2
+        self.qdyn = 0.5 * self.atmos.rho * self.eas ** 2
