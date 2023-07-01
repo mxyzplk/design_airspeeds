@@ -54,8 +54,20 @@ class Aircraft:
 
         with open(file_path, 'r') as file:
             temp = file.readline().split()
-            pass
-        
+            self.s = float(temp[0])
+            temp = file.readline().split()
+            self.b = float(temp[0])
+            temp = file.readline().split()
+            self.mac = float(temp[0])
+            temp = file.readline().split()
+            self.ceiling_fxx = float(temp[0])
+            temp = file.readline().split()
+            self.ceiling_f00 = float(temp[0])
+            temp = file.readline().split()
+            self.ctype = temp[0]
+            temp = file.readline().split()
+            self.disa = float(temp[0])
+
     def read_mass(self):
 
         file_path = os.path.join(self.resources_dir, 'mass.txt')
