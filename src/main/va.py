@@ -16,7 +16,7 @@ class Va:
     def calc_va(self, vs, vc, lf, altitudes, disa):
 
         for i in range(len(vs)):
-            self.va[i, 0] = vs[i] * math.sqrt(lf)
+            self.va[i, 0] = vs[i] * math.sqrt(lf) # 23.335
             if self.va[i, 0] > vc[i]:
                 self.va[i, 0] = vc[i]
 

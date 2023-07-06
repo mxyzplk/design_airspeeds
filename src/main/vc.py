@@ -1,6 +1,8 @@
 import numpy as np
 import aircraft
 import standard_atmosphere
+from common_functions import knots2ms
+import math
 
 
 class Vc:
@@ -9,8 +11,14 @@ class Vc:
         self.ac = aircraft.Aircraft()
         self.altitudes = np.empty(int(self.ac.ceiling_f00) + 1)
         self.vc = np.empty(int(self.ac.ceiling_f00) + 1, 4)   # VC given in Calibrated airspeed
+        self.vc_limit = 0
 
         Vc.get_vc(self)
+
+        if self.ac.ctype == 23:
+            self.check_vc_part_23(self.ac.ws, self.ac.atype)
+        else:
+            self.check_vc_part_25()
 
     def get_vc(self):
         for i in range(len(self.altitudes)):
@@ -44,5 +52,21 @@ class Vc:
                     self.vc[i, 2] = speed_cas.tas
                     self.vc[i, 3] = speed_cas.mach
 
-    def check_vc(self):
+    def check_vc_part_23(self, ws, atype):
+
+        if atype == 'N' or atype == 'C' atype == 'U':
+            if ws <= 20:
+                self.vc_limit = knots2ms(33 * math.sqrt(ws))  #CS 23.335(a)(1)(i)
+            else:
+                factor = (ws - 20) * (28.6 - 33) / (100 - 20) + 33
+                self.vc_limit = knots2ms(factor * math.sqrt(ws))  # CS 23.335(a)(2)
+        elif atype == 'A':
+            if ws <= 20:
+                self.vc_limit = knots2ms(36 * math.sqrt(ws))   #CS 23.335(a)(1)(ii)
+            else:
+                factor = (ws - 20) * (28.6 - 36) / (100 - 20) + 36
+                self.vc_limit = knots2ms(factor * math.sqrt(ws))  # CS 23.335(a)(2)
+
+
+    def check_vc_part_25(self):
         pass

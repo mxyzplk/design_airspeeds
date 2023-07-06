@@ -4,5 +4,6 @@ VECTOR171     Aircraft Name
 2.05          Mean Aerodynamic Chord [m]
 6096          Flap Operating Ceiling [m]
 12000         Aircraft Operating Ceiling [m]
-23            Certification Type (23 / 25)
 0             Disa
+23            Certification Type (23 / 25)
+C             Aircraft Type (C: Commuter U: Utility N: Normal A: Acrobatic)

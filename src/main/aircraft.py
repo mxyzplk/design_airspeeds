@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from common_functions import kg2lb, sqm2sqft
 
 
 class Aircraft:
@@ -21,6 +22,7 @@ class Aircraft:
         self.mac = 0
         self.name = None
         self.disa = 0
+        self.atype = None
 
         # aerodynamic data
         self.dclda = None
@@ -40,6 +42,8 @@ class Aircraft:
         self.read_vc()
         self.read_clmax_f00()
         self.read_clmax_fxx()
+
+        self.ws = kg2lb(self.mtow) / sqm2sqft(self.s)
 
     def get_dirs(self):
 
@@ -69,9 +73,12 @@ class Aircraft:
             temp = file.readline().split()
             self.ceiling_f00 = float(temp[0])
             temp = file.readline().split()
-            self.ctype = temp[0]
-            temp = file.readline().split()
             self.disa = float(temp[0])
+            temp = file.readline().split()
+            self.ctype = temp[0]
+            if ctype == 23:
+                temp = file.readline().split()
+                self.atype = temp[0]
 
     def read_mass(self):
 
