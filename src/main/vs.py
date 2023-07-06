@@ -11,8 +11,8 @@ class Vs:
         self.altitude_f00 = np.empty(int(self.ac.ceiling_f00))
         self.altitude_fxx = np.array(0, int(self.ac.ceiling_f00))
 
-        self.vs_f00 = np.empty((int(self.ac.ceiling_f00) + 1, 4))  # 4 Design Weights (MTOW, MLW, MZFW, MOW)
-        self.vs_fxx = np.empty((2, len(self.ac.clmax_fxx), 4))
+        self.vs_f00 = np.empty((int(self.ac.ceiling_f00) + 1, 4, 4))  # 4 Design Weights (MTOW, MLW, MZFW, MOW)
+        self.vs_fxx = np.empty((2, len(self.ac.clmax_fxx), 4, 4))
 
         Vs.get_vs_f00(self, disa)
         Vs.get_vs_fxx(self, disa)
@@ -48,7 +48,10 @@ class Vs:
                     vs_ini = self.calc_vs(clmax, speed_ini.atmos.rho, self.ac.s, self.ac.weights[i])
                     speed_i = Airspeed(self.altitude_f00[j], vs_ini, "EAS", disa)
 
-                self.vs_f00[j, i] = speed_i.eas
+                self.vs_f00[j, i, 0] = speed_i.eas
+                self.vs_f00[j, i, 1] = speed_i.cas
+                self.vs_f00[j, i, 2] = speed_i.tas
+                self.vs_f00[j, i, 3] = speed_i.mach
 
     @staticmethod
     def calc_vs(clmax, rho, s, weight):
@@ -69,4 +72,9 @@ class Vs:
             for j in range(len(self.altitude_fxx)):             # Altitude Loop
                 for k in range(len(self.ac.clmax_fxx)):    # Flap Loop
                     atm = Atmosphere(self.altitude_fxx[j], disa)
-                    self.vs_fxx[j, i, k] = self.calc_vs(self.ac.clmax_fxx[1, k], atm.rho, self.ac.s, self.ac.weights[i])
+                    vs = self.calc_vs(self.ac.clmax_fxx[1, k], atm.rho, self.ac.s, self.ac.weights[i])
+                    speed = Airspeed(self.altitude_fxx[j], vs, "EAS", disa)
+                    self.vs_fxx[j, i, k, 0] = speed.eas
+                    self.vs_fxx[j, i, k, 1] = speed.cas
+                    self.vs_fxx[j, i, k, 2] = speed.tas
+                    self.vs_fxx[j, i, k, 3] = speed.mach

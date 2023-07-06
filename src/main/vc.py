@@ -8,7 +8,7 @@ class Vc:
 
         self.ac = aircraft.Aircraft()
         self.altitudes = np.empty(int(self.ac.ceiling_f00) + 1)
-        self.vc = np.empty(int(self.ac.ceiling_f00) + 1)
+        self.vc = np.empty(int(self.ac.ceiling_f00) + 1)   # VC given in Calibrated airspeed
 
         Vc.get_vc(self)
 

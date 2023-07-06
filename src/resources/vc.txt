@@ -1,0 +1,2 @@
+320     KCAS limitation
+0.80    Mach limitation
