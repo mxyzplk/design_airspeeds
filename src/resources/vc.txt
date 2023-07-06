@@ -1,2 +1,3 @@
-320     KCAS limitation
-0.80    Mach limitation
+320                KCAS limitation
+0.80               Mach limitation
+1   300  3048     Low Altitude Limitation (KEAS)

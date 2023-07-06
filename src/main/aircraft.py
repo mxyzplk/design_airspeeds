@@ -26,7 +26,12 @@ class Aircraft:
         self.dclda = None
         self.clmax_f00 = None
         self.clmax_fxx = None
+
+        # vc data
         self.vc = []
+        self.vc_limitation = []
+
+        # directories
         self.resources_dir = None
         self.results_dir = None
 
@@ -109,6 +114,12 @@ class Aircraft:
             self.vc.append(float(temp[0]) * 0.514444444)    # CAS limitation
             temp = file.readline().split()
             self.vc.append(float(temp[0]))                  # Mach limitation
+            temp = file.readline().split()
+            self.vc_limitation.append(int(temp[0]))
+            if self.vc_limitation[0] == 1:                  # Low Altitude limitation
+                self.vc_limitation.append(float(temp[1]))
+                self.vc_limitation.append(float(temp[2]))
+
 
     def read_clmax_f00(self):
 
