@@ -1,5 +1,6 @@
 import numpy as np
 import aircraft
+import os
 import standard_atmosphere
 from common_functions import knots2ms
 import math
@@ -12,6 +13,7 @@ class Vc:
         self.altitudes = np.empty(int(self.ac.ceiling_f00) + 1)
         self.vc = np.empty(int(self.ac.ceiling_f00) + 1, 4)   # VC given in Calibrated airspeed
         self.vc_limit = 0
+        self.limitation = []
 
         Vc.get_vc(self)
 
@@ -35,11 +37,13 @@ class Vc:
                         self.vc[i, 1] = speed_mach.cas
                         self.vc[i, 2] = speed_mach.tas
                         self.vc[i, 3] = speed_mach.mach
+                        self.limitation.append("Mc")
                     else:
                         self.vc[i, 0] = speed_eas.eas
                         self.vc[i, 1] = speed_eas.cas
                         self.vc[i, 2] = speed_eas.tas
                         self.vc[i, 3] = speed_eas.mach
+                        self.limitation.append("Vc")
             else:
                 if speed_cas.mach > float(self.ac.vc[1]):
                     self.vc[i, 0] = speed_mach.eas
@@ -53,8 +57,10 @@ class Vc:
                     self.vc[i, 3] = speed_cas.mach
 
     def check_vc_part_23(self, ws, atype):
-
-        if atype == 'N' or atype == 'C' atype == 'U':
+        check_vc_part_23_results = os.path.join(self.ac.results_dir, "check_vc_part_23_results.txt")
+        file = open(check_vc_part_23_results, "w")
+        check_vc = True
+        if atype == 'N' or atype == 'C' or atype == 'U':
             if ws <= 20:
                 self.vc_limit = knots2ms(33 * math.sqrt(ws))  #CS 23.335(a)(1)(i)
             else:
@@ -67,6 +73,27 @@ class Vc:
                 factor = (ws - 20) * (28.6 - 36) / (100 - 20) + 36
                 self.vc_limit = knots2ms(factor * math.sqrt(ws))  # CS 23.335(a)(2)
 
+        for i in range(len(self.vc[:, 0])):
+            if self.vc[i, 0] > self.vc_limit:
+                file.write("Vc exceeded value " + self.vc_limit + " from 23.335(a)(1)(2)")
+                check_vc = False
+                break
 
-    def check_vc_part_25(self):
-        pass
+        if check_vc == True:
+            file.write("Vc complying with value " + self.vc_limit + " from 23.335(a)(1)(2)")
+
+
+
+    def check_vc_part_25(self, vb_eas):
+        check_vc_part_25_results = os.path.join(self.ac.results_dir, "check_vc_part_25_results.txt")
+        file = open(check_vc_part_25_results, "w")
+        check_vc = True
+
+        for i in range(len(self.vc[:, 0])):
+            if self.vc[i, 0] < vb_eas[i]:
+                file.write("Vb exceeded Vc at altitude " + self.altitudes[i] + " not complying with 23.335(d)(2)")
+                check_vc = False
+                break
+
+        if check_vc == True:
+            file.write("Vc greater than Vb, complying with 23.335(d)(2)")

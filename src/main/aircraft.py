@@ -75,7 +75,7 @@ class Aircraft:
             temp = file.readline().split()
             self.disa = float(temp[0])
             temp = file.readline().split()
-            self.ctype = temp[0]
+            self.ctype = int(temp[0])
             if ctype == 23:
                 temp = file.readline().split()
                 self.atype = temp[0]

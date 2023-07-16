@@ -15,3 +15,10 @@ def knots2ms(kts):
 
 def ms2knots(ms):
     return ms / 0.5144444
+
+def kgm3_to_slugsft3(rho):
+    pass
+
+def slugsft3_to_kgm3(rho):
+    pass
+
