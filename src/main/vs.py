@@ -1,7 +1,7 @@
 from standard_atmosphere import *
 from aircraft import Aircraft
 import numpy as np
-
+from scipy.interpolate import interp1d
 
 class Vs:
     def __init__(self, disa):
@@ -63,7 +63,8 @@ class Vs:
     @staticmethod
     def get_clmax(variable, cl_curve):
 
-        clmax = np.interp(variable, cl_curve[0, :], cl_curve[1, :])
+        clmax_func = interp1d(cl_curve[0, :], cl_curve[1, :])
+        clmax = clmax_func(variable)
         return clmax
 
     def get_vs_fxx(self, disa):

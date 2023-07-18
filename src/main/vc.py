@@ -6,6 +6,7 @@ from common_functions import knots2ms
 import math
 
 
+
 class Vc:
     def __init__(self):
 
@@ -19,8 +20,6 @@ class Vc:
 
         if self.ac.ctype == 23:
             self.check_vc_part_23(self.ac.ws, self.ac.atype)
-        else:
-            self.check_vc_part_25()
 
     def get_vc(self):
         for i in range(len(self.altitudes)):
