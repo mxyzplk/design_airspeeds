@@ -174,7 +174,7 @@ class Airspeed:
 
         elif self.type == 'Mach':
             self.mach = self.speed
-            self.tas = self.mach * self.cs
+            self.tas = self.mach * self.atmos.cs
             self.eas = cso * self.mach * self.atmos.delta ** 0.5
             self.cas = (2 * cso ** 2 / (gamma - 1) * ((1 + self.atmos.delta * (
                         (1 + (gamma - 1) / 2 * ((self.eas / cso) ** 2) / self.atmos.delta) ** (gamma / (gamma - 1)) - 1)) ** (
@@ -187,12 +187,12 @@ class Airspeed:
                         (1 + (gamma - 1) / 2 * ((self.eas / cso) ** 2) / self.atmos.delta) ** (gamma / (gamma - 1)) - 1)) ** (
                                                                   (gamma - 1) / gamma) - 1)) ** 0.5
             self.mach = self.eas / (cso * self.atmos.delta ** 0.5)
-            self.tas = self.mach * self.cs
+            self.tas = self.mach * self.atmos.cs
 
 
         elif self.type == 'TAS':
             self.tas = self.speed
-            self.mach = self.tas / self.cs
+            self.mach = self.tas / self.atmos.cs
             self.eas = cso * self.mach * self.atmos.delta ** 0.5
             self.cas = (2 * cso ** 2 / (gamma - 1) * ((1 + self.atmos.delta * (
                         (1 + (gamma - 1) / 2 * ((self.eas / cso) ** 2) / self.atmos.delta) ** (gamma / (gamma - 1)) - 1)) ** (
